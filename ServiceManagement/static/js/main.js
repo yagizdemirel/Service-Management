@@ -93,6 +93,9 @@ function renderServices(services) {
         let badgeClass = 'badge-stopped';
         let icon = 'bi-stop-circle';
 
+        // Duruma göre butonların aktiflik durumunu belirle
+        let isRunning = s.status === 'running';
+
         if (s.status === 'running') {
             badgeClass = 'badge-running';
             icon = 'bi-check-circle-fill';
@@ -103,18 +106,30 @@ function renderServices(services) {
 
         return `
             <tr>
-                <td class="ps-4 fw-bold font-monospace text-dark">${s.name}</td>
+                <td class="ps-4 fw-bold font-monospace text-dark">
+                    ${s.name}
+                </td>
                 <td>
                     <span class="badge-status ${badgeClass}">
                         <i class="bi ${icon}"></i> ${s.status.toUpperCase()}
                     </span>
                 </td>
-                <td class="text-secondary small text-truncate" style="max-width: 300px;">${s.description}</td>
+                <td class="text-secondary small text-truncate" style="max-width: 250px;">${s.description}</td>
                 <td class="text-end pe-4">
-                    <button class="btn btn-sm btn-white border shadow-sm hover-primary" onclick="openLogs('${s.name}')">
-                        <i class="bi bi-file-text"></i> Logs
-                    </button>
-                    <!-- Future actions: Start/Stop buttons -->
+                    <div class="btn-group" role="group">
+                        <button class="btn btn-sm btn-white border shadow-sm" onclick="controlService('${s.name}', 'start')" ${isRunning ? 'disabled' : ''} title="Start">
+                            <i class="bi bi-play-fill text-success"></i>
+                        </button>
+                        <button class="btn btn-sm btn-white border shadow-sm" onclick="controlService('${s.name}', 'stop')" ${!isRunning ? 'disabled' : ''} title="Stop">
+                            <i class="bi bi-stop-fill text-danger"></i>
+                        </button>
+                        <button class="btn btn-sm btn-white border shadow-sm" onclick="controlService('${s.name}', 'restart')" title="Restart">
+                            <i class="bi bi-arrow-clockwise text-primary"></i>
+                        </button>
+                        <button class="btn btn-sm btn-white border shadow-sm ms-1" onclick="openLogs('${s.name}')">
+                            <i class="bi bi-file-text"></i> Logs
+                        </button>
+                    </div>
                 </td>
             </tr>
         `;
@@ -169,4 +184,51 @@ function animateValue(id, start, end, duration) {
             clearInterval(timer);
         }
     }, stepTime);
+}
+
+async function controlService(serviceName, action) {
+    // Kullanıcıya geri bildirim ver (opsiyonel: butonu loading yapabilirsin)
+    showToast(`Sending ${action} signal to ${serviceName}...`);
+
+    try {
+        const res = await fetch(`/api/services/${serviceName}/control`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ action: action })
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            showToast(`${serviceName}: ${data.message}`, 'success');
+            // Listeyi hemen güncelle
+            fetchServices(false);
+        } else {
+            showToast(`Error: ${data.message}`, 'error');
+        }
+    } catch (err) {
+        showToast(`Connection error: ${err}`, 'error');
+    }
+}
+
+function showToast(message, type = 'info') {
+    const toastEl = document.getElementById('liveToast');
+    const toastBody = document.getElementById('toast-message');
+    const toastHeader = toastEl.querySelector('.toast-header i'); // Selector fix: .text-primary might not exist if class changed previously
+
+    toastBody.textContent = message;
+
+    // İkon rengini duruma göre değiştir
+    if (type === 'error') {
+        toastHeader.className = 'bi bi-exclamation-triangle-fill me-2 text-danger';
+    } else if (type === 'success') {
+        toastHeader.className = 'bi bi-check-circle-fill me-2 text-success';
+    } else {
+        toastHeader.className = 'bi bi-info-circle-fill me-2 text-primary';
+    }
+
+    const toast = new bootstrap.Toast(toastEl);
+    toast.show();
 }

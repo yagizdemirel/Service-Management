@@ -75,6 +75,27 @@ class ServiceManager:
         except Exception as e:
             return f"Error retrieving logs: {str(e)}"
 
+    @staticmethod
+    def control_service(service_name, action):
+        """Servisi başlatır, durdurur veya yeniden başlatır."""
+        valid_actions = ['start', 'stop', 'restart']
+        if action not in valid_actions:
+            return False, "Invalid action"
+
+        if IS_MACOS:
+            # macOS Mock Simülasyonu: Başarılı gibi davran
+            time.sleep(1) # İşlem süresini simüle et
+            return True, f"Mock: Service {service_name} {action}ed successfully"
+        
+        try:
+            # Linux Production Komutu
+            # Not: Bu işlemin çalışması için uygulamanın sudo yetkisiyle çalışması gerekir
+            cmd = ['sudo', 'systemctl', action, service_name]
+            subprocess.check_call(cmd)
+            return True, f"Service {service_name} {action}ed successfully"
+        except subprocess.CalledProcessError as e:
+            return False, str(e)
+
     # --- MOCK DATA METHODS FOR MACOS DEV ---
     @staticmethod
     def _get_mock_services():
@@ -151,6 +172,16 @@ def api_services():
 def api_service_logs(service_name):
     logs = ServiceManager.get_service_logs(service_name)
     return jsonify({'logs': logs})
+
+@app.route('/api/services/<service_name>/control', methods=['POST'])
+def api_control_service(service_name):
+    data = request.json
+    action = data.get('action')
+    success, message = ServiceManager.control_service(service_name, action)
+    if success:
+        return jsonify({'status': 'success', 'message': message})
+    else:
+        return jsonify({'status': 'error', 'message': message}), 500
 
 if __name__ == '__main__':
     app.run(debug=False, host='0.0.0.0', port=5001)
