@@ -1,0 +1,169 @@
+:root {
+    --bg-light: #f6f8fa;
+    --card-bg: #ffffff;
+    --border-color: #d0d7de;
+    --text-primary: #24292f;
+    --text-secondary: #57606a;
+    --primary-color: #0969da;
+    --accent-color: #1a7f37;
+    --input-bg: #ffffff;
+    --input-focus-border: #0969da;
+}
+
+body {
+    background-color: var(--bg-light);
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    color: var(--text-primary);
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Glassmorphism & Cards */
+.glass-card {
+    background: rgba(255, 255, 255, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(208, 215, 222, 0.6) !important;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(27, 31, 35, 0.04);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.glass-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(27, 31, 35, 0.1);
+    border-color: var(--primary-color) !important;
+}
+
+/* Navbar */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border-color) !important;
+}
+
+.navbar-brand {
+    color: var(--text-primary) !important;
+}
+
+.navbar-brand span {
+    letter-spacing: -0.5px;
+}
+
+/* Typography */
+.font-monospace {
+    font-family: 'JetBrains Mono', monospace !important;
+}
+
+/* Tables */
+.table-custom {
+    --bs-table-bg: transparent;
+    --bs-table-color: var(--text-primary);
+    --bs-table-border-color: var(--border-color);
+    --bs-table-hover-bg: rgba(234, 238, 242, 0.5);
+}
+
+thead.bg-custom {
+    background-color: rgba(246, 248, 250, 0.8);
+    text-transform: uppercase;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    color: var(--text-secondary);
+}
+
+tbody tr {
+    transition: background-color 0.2s;
+}
+
+/* Badges */
+.badge-status {
+    padding: 0.5em 0.8em;
+    border-radius: 6px;
+    font-weight: 600;
+    font-size: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.badge-running {
+    background-color: #dafbe1;
+    color: #1a7f37;
+    border: 1px solid rgba(26, 127, 55, 0.2);
+}
+
+.badge-failed {
+    background-color: #ffebe9;
+    color: #cf222e;
+    border: 1px solid rgba(207, 34, 46, 0.2);
+}
+
+.badge-stopped,
+.badge-exited {
+    background-color: #eff1f3;
+    color: #57606a;
+    border: 1px solid rgba(87, 96, 106, 0.2);
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--bg-light);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #d0d7de;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #afb8c1;
+}
+
+/* Modal Logs */
+.log-container {
+    height: 400px;
+    overflow-y: auto;
+    color: #24292f;
+    background-color: #f6f8fa;
+    border: 1px solid var(--border-color);
+    white-space: pre-wrap;
+    font-size: 0.85rem;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    line-height: 1.5;
+}
+
+.log-container span.timestamp {
+    color: #6e7781;
+    margin-right: 8px;
+}
+
+.log-container span.process {
+    color: #0969da;
+    font-weight: bold;
+}
+
+/* Inputs */
+.form-control {
+    background-color: var(--input-bg);
+    border-color: var(--border-color);
+    color: var(--text-primary);
+}
+
+.form-control:focus {
+    background-color: #ffffff;
+    border-color: var(--primary-color);
+    color: var(--text-primary);
+    box-shadow: 0 0 0 2px rgba(9, 105, 218, 0.2);
+}
+
+.text-muted {
+    color: var(--text-secondary) !important;
+}
+
+.border-secondary {
+    border-color: var(--border-color) !important;
+}
